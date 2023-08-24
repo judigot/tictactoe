@@ -45,23 +45,22 @@ function App() {
   };
 
   const handleMarkGrid = (gridIndex: number) => {
-    const tempBoard = board;
     const mark = remainingMoves % 2 !== 0 ? PLAYER_ONE : PLAYER_TWO;
     setRemainingMoves(remainingMoves - 1);
 
     // 1st row if index is 0, 1, 2
     if (gridIndex >= 0 && gridIndex <= 2) {
-      tempBoard[0][gridIndex] = mark;
+      board[0][gridIndex] = mark;
     }
 
     // 2nd row if index is 3, 4, 5
     if (gridIndex >= 3 && gridIndex <= 5) {
-      tempBoard[1][gridIndex - 3] = mark;
+      board[1][gridIndex - 3] = mark;
     }
 
     // 3rd row if index is 6, 7, 8
     if (gridIndex >= 6 && gridIndex <= 8) {
-      tempBoard[2][gridIndex - 6] = mark;
+      board[2][gridIndex - 6] = mark;
     }
 
     if (checkForWinners("X")) {
@@ -108,6 +107,7 @@ function App() {
 
             return (
               <Grid
+                key={i}
                 gridIndex={i}
                 gridState={gridState}
                 handleMarkGrid={handleMarkGrid}
