@@ -1,6 +1,6 @@
 interface Props {
   gridIndex: number;
-  gridState: boolean | number;
+  gridState: boolean | string;
   handleMarkGrid: (gridIndex: number) => void;
 }
 

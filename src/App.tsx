@@ -4,30 +4,49 @@ import "./App.css";
 import Grid from "./components/Grid";
 
 function App() {
-  const WINNERS = [
-    [1, 1, 1],
+  const PLAYER_ONE: boolean | string = "X";
+  const PLAYER_TWO: boolean | string = "O";
+
+  const CLEAN_BOARD = [
+    [false, false, false],
     [false, false, false],
     [false, false, false],
   ];
 
-  const CLEANBOARD = [
-    [false, false, false],
-    [false, false, false],
-    [false, false, false],
-  ];
+  // const indexes = [
+  //   ["00", "01", "02"],
+  //   ["10", "11", "12"],
+  //   ["20", "21", "22"],
+  // ];
   const [board, setBoard] =
-    React.useState<Array<(boolean | number)[]>>(CLEANBOARD);
+    React.useState<Array<(boolean | string)[]>>(CLEAN_BOARD);
 
   const [remainingMoves, setRemainingMoves] = React.useState<number>(9);
 
   const handleReset = () => {
-    setBoard(CLEANBOARD);
+    setBoard(CLEAN_BOARD);
     setRemainingMoves(9);
+  };
+
+  const checkForWinners = (player: string) => {
+    // prettier-ignore
+    if (
+      (board[0][0]=== player && board[0][1]=== player && board[0][2] === player) || // _
+      (board[1][0]=== player && board[1][1]=== player && board[1][2] === player) || // _
+      (board[2][0]=== player && board[2][1]=== player && board[2][2] === player) || // _
+      (board[0][0]=== player && board[1][0]=== player && board[2][0] === player) || // |
+      (board[0][1]=== player && board[1][1]=== player && board[2][1] === player) || // |
+      (board[0][2]=== player && board[1][2]=== player && board[2][2] === player) || // |
+      (board[0][0]=== player && board[1][1]=== player && board[2][2] === player) || // \
+      (board[0][2]=== player && board[1][1]=== player && board[2][0] === player) // /
+    ) {
+      return true;
+    }
   };
 
   const handleMarkGrid = (gridIndex: number) => {
     const tempBoard = board;
-    const mark = remainingMoves % 2 !== 0 ? 1 : 0;
+    const mark = remainingMoves % 2 !== 0 ? PLAYER_ONE : PLAYER_TWO;
     setRemainingMoves(remainingMoves - 1);
 
     // 1st row if index is 0, 1, 2
@@ -43,6 +62,13 @@ function App() {
     // 3rd row if index is 6, 7, 8
     if (gridIndex >= 6 && gridIndex <= 8) {
       tempBoard[2][gridIndex - 6] = mark;
+    }
+
+    if (checkForWinners("X")) {
+      alert("Player 1 wins");
+    }
+    if (checkForWinners("O")) {
+      alert("Player 2 wins");
     }
   };
 
@@ -63,7 +89,7 @@ function App() {
       <div id="gridContainer">
         <div id="gridBox">
           {[...Array(9)].map((element, i) => {
-            let gridState: boolean | number = false;
+            let gridState: boolean | string = false;
 
             // 1st row if index is 0, 1, 2
             if (i >= 0 && i <= 2 && typeof board[0][i] !== "boolean") {
@@ -93,7 +119,6 @@ function App() {
       <br />
       <br />
       <br />
-      <div>{board.toString()}</div>
       {remainingMoves !== 9 && (
         <button type="button" onClick={handleReset}>
           {(() => {
