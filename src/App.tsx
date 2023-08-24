@@ -13,11 +13,6 @@ function App() {
     [false, false, false],
   ];
 
-  // const indexes = [
-  //   ["00", "01", "02"],
-  //   ["10", "11", "12"],
-  //   ["20", "21", "22"],
-  // ];
   const [board, setBoard] =
     React.useState<Array<(boolean | string)[]>>(CLEAN_BOARD);
 
