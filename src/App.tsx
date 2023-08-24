@@ -101,17 +101,17 @@ function App() {
 
             // 1st row if index is 0, 1, 2
             if (i >= 0 && i <= 2 && typeof board[0][i] !== "boolean") {
-              gridState = board[0][i];
+              gridState = board[0][i] === "X" ? "❌" : "⭕";
             }
 
             // 2nd row if index is 3, 4, 5
             if (i >= 3 && i <= 5 && typeof board[1][i - 3] !== "boolean") {
-              gridState = board[1][i - 3];
+              gridState = board[1][i - 3] === "X" ? "❌" : "⭕";
             }
 
             // 3rd row if index is 6, 7, 8
             if (i >= 6 && i <= 8 && typeof board[2][i - 6] !== "boolean") {
-              gridState = board[2][i - 6];
+              gridState = board[2][i - 6] === "X" ? "❌" : "⭕";
             }
 
             return (
