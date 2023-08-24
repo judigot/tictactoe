@@ -16,7 +16,7 @@ function App() {
     [false, false, false],
   ];
   const [board, setBoard] =
-    React.useState<Array<(boolean | string)[]>>(CLEANBOARD);
+    React.useState<Array<(boolean | number)[]>>(CLEANBOARD);
 
   const [remainingMoves, setRemainingMoves] = React.useState<number>(9);
 
@@ -27,28 +27,23 @@ function App() {
 
   const handleMarkGrid = (gridIndex: number) => {
     const tempBoard = board;
-    const mark = remainingMoves % 2 !== 0 ? "❌" : "⭕";
+    const mark = remainingMoves % 2 !== 0 ? 1 : 0;
     setRemainingMoves(remainingMoves - 1);
+
     // 1st row if index is 0, 1, 2
-    gridIndex >= 0 &&
-      gridIndex <= 2 &&
-      (() => {
-        tempBoard[0][gridIndex] = mark;
-      })();
+    if (gridIndex >= 0 && gridIndex <= 2) {
+      tempBoard[0][gridIndex] = mark;
+    }
 
     // 2nd row if index is 3, 4, 5
-    gridIndex >= 3 &&
-      gridIndex <= 5 &&
-      (() => {
-        tempBoard[1][gridIndex - 3] = mark;
-      })();
+    if (gridIndex >= 3 && gridIndex <= 5) {
+      tempBoard[1][gridIndex - 3] = mark;
+    }
 
     // 3rd row if index is 6, 7, 8
-    gridIndex >= 6 &&
-      gridIndex <= 8 &&
-      (() => {
-        tempBoard[2][gridIndex - 6] = mark;
-      })();
+    if (gridIndex >= 6 && gridIndex <= 8) {
+      tempBoard[2][gridIndex - 6] = mark;
+    }
   };
 
   return (
@@ -68,30 +63,23 @@ function App() {
       <div id="gridContainer">
         <div id="gridBox">
           {[...Array(9)].map((element, i) => {
-            let gridState: boolean | string = false;
+            let gridState: boolean | number = false;
 
             // 1st row if index is 0, 1, 2
-            i >= 0 &&
-              i <= 2 &&
-              (() => {
-                gridState = typeof board[0][i] !== "boolean" && board[0][i];
-              })();
+            if (i >= 0 && i <= 2 && typeof board[0][i] !== "boolean") {
+              gridState = board[0][i];
+            }
 
             // 2nd row if index is 3, 4, 5
-            i >= 3 &&
-              i <= 5 &&
-              (() => {
-                gridState =
-                  typeof board[1][i - 3] !== "boolean" && board[1][i - 3];
-              })();
+            if (i >= 3 && i <= 5 && typeof board[1][i - 3] !== "boolean") {
+              gridState = board[1][i - 3];
+            }
 
             // 3rd row if index is 6, 7, 8
-            i >= 6 &&
-              i <= 8 &&
-              (() => {
-                gridState =
-                  typeof board[2][i - 6] !== "boolean" && board[2][i - 6];
-              })();
+            if (i >= 6 && i <= 8 && typeof board[2][i - 6] !== "boolean") {
+              gridState = board[2][i - 6];
+            }
+
             return (
               <Grid
                 gridIndex={i}
@@ -105,6 +93,7 @@ function App() {
       <br />
       <br />
       <br />
+      <div>{board.toString()}</div>
       {remainingMoves !== 9 && (
         <button type="button" onClick={handleReset}>
           {(() => {

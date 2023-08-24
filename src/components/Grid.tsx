@@ -1,8 +1,6 @@
-import React from "react";
-
 interface Props {
   gridIndex: number;
-  gridState: boolean | string;
+  gridState: boolean | number;
   handleMarkGrid: (gridIndex: number) => void;
 }
 
@@ -12,10 +10,7 @@ export default function Grid({
   handleMarkGrid,
 }: Props): JSX.Element {
   const markGrid = (gridIndex: number) => {
-    !gridState &&
-      (() => {
-        handleMarkGrid(gridIndex);
-      })();
+    !gridState && handleMarkGrid(gridIndex);
   };
 
   return (
