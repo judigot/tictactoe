@@ -1,26 +1,31 @@
 import React from "react";
 
 interface Props {
-  index: number;
+  gridIndex: number;
+  gridState: boolean | string;
+  handleMarkGrid: (gridIndex: number) => void;
 }
 
-export default function Grid({ index }: Props): JSX.Element {
-  const [isClicked, setIsClicked] = React.useState<boolean>(false);
-
-  const handleClick = (index: number) => {
-    index;
-    setIsClicked(true);
+export default function Grid({
+  gridIndex,
+  gridState,
+  handleMarkGrid,
+}: Props): JSX.Element {
+  const markGrid = (gridIndex: number) => {
+    !gridState &&
+      (() => {
+        handleMarkGrid(gridIndex);
+      })();
   };
+
   return (
     <div
       style={{ border: "1px solid white" }}
       onClick={() => {
-        handleClick(index);
+        markGrid(gridIndex);
       }}
     >
-      {isClicked && <div>❌</div>}
-
-      {/* <div>⭕</div> */}
+      {gridState && <div>{gridState}</div>}
     </div>
   );
 }
