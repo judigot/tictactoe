@@ -2,6 +2,12 @@ import React from "react";
 
 import "./App.css";
 import Grid from "./components/Grid";
+import HomePage from "./components/HomePage";
+
+enum GameState {
+  HOMEPAGE = "homepage",
+  GAME = "game",
+}
 
 function App() {
   const PLAYER_ONE: boolean | string = "X";
@@ -20,13 +26,21 @@ function App() {
 
   const [message, setMessage] = React.useState<string>("");
 
+  const [gameState, setGameState] = React.useState<GameState>(
+    GameState.HOMEPAGE
+  );
+
   const [isGameOver, setIsGameOver] = React.useState<boolean>(false);
 
-  const handleReset = () => {
+  const reset = () => {
     setMessage("");
     setIsGameOver(false);
     setBoard(CLEAN_BOARD);
     setRemainingMoves(9);
+  };
+
+  const handleStop = () => {
+    setGameState(GameState.HOMEPAGE);
   };
 
   const checkForWinners = (player: string) => {
@@ -83,57 +97,72 @@ function App() {
     }
   };
 
+  const startGame = () => {
+    setGameState(GameState.GAME);
+    reset();
+  };
+
   return (
     <>
       <h1>Tic-Tac-Toe - judigot</h1>
-      <h1>
-        {message}
-        {!isGameOver && remainingMoves === 0 && "Draw"}
-        {!isGameOver &&
-          remainingMoves !== 0 &&
-          `${remainingMoves % 2 !== 0 ? "❌" : "⭕"}'s turn`}
-      </h1>
-      <div>Remaining moves: {remainingMoves}</div>
-      <div id="gridContainer">
-        <div id="gridBox" className={`${!isGameOver ? "pointer" : ""}`}>
-          {[...Array(9)].map((element, i) => {
-            let gridState: boolean | string = false;
+      {gameState === GameState.HOMEPAGE && (
+        <HomePage handleStartGame={startGame} />
+      )}
+      {gameState === GameState.GAME && (
+        <>
+          <h1>
+            {message}
+            {!isGameOver && remainingMoves === 0 && "Draw"}
+            {!isGameOver &&
+              remainingMoves !== 0 &&
+              `${remainingMoves % 2 !== 0 ? "❌" : "⭕"}'s turn`}
+          </h1>
+          <div>Remaining moves: {remainingMoves}</div>
+          <div id="gridContainer">
+            <div id="gridBox" className={`${!isGameOver ? "pointer" : ""}`}>
+              {[...Array(9)].map((element, i) => {
+                let gridState: boolean | string = false;
 
-            // 1st row if index is 0, 1, 2
-            if (i >= 0 && i <= 2 && typeof board[0][i] !== "boolean") {
-              gridState = board[0][i] === "X" ? "❌" : "⭕";
-            }
+                // 1st row if index is 0, 1, 2
+                if (i >= 0 && i <= 2 && typeof board[0][i] !== "boolean") {
+                  gridState = board[0][i] === "X" ? "❌" : "⭕";
+                }
 
-            // 2nd row if index is 3, 4, 5
-            if (i >= 3 && i <= 5 && typeof board[1][i - 3] !== "boolean") {
-              gridState = board[1][i - 3] === "X" ? "❌" : "⭕";
-            }
+                // 2nd row if index is 3, 4, 5
+                if (i >= 3 && i <= 5 && typeof board[1][i - 3] !== "boolean") {
+                  gridState = board[1][i - 3] === "X" ? "❌" : "⭕";
+                }
 
-            // 3rd row if index is 6, 7, 8
-            if (i >= 6 && i <= 8 && typeof board[2][i - 6] !== "boolean") {
-              gridState = board[2][i - 6] === "X" ? "❌" : "⭕";
-            }
+                // 3rd row if index is 6, 7, 8
+                if (i >= 6 && i <= 8 && typeof board[2][i - 6] !== "boolean") {
+                  gridState = board[2][i - 6] === "X" ? "❌" : "⭕";
+                }
 
-            return (
-              <Grid
-                key={i}
-                gridIndex={i}
-                gridState={gridState}
-                handleMarkGrid={handleMarkGrid}
-              />
-            );
-          })}
-        </div>
-      </div>
-      <br />
-      <br />
-      <br />
-      {remainingMoves !== 9 && (
-        <button type="button" onClick={handleReset}>
-          {(() => {
-            return remainingMoves !== 0 ? "Reset" : "New Game";
-          })()}
-        </button>
+                return (
+                  <Grid
+                    key={i}
+                    gridIndex={i}
+                    gridState={gridState}
+                    handleMarkGrid={handleMarkGrid}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          <br />
+          <br />
+          <br />
+          {isGameOver && (
+            <div>
+              <button type="button" onClick={reset}>
+                Continue
+              </button>
+              <button type="button" onClick={handleStop}>
+                Stop
+              </button>
+            </div>
+          )}
+        </>
       )}
     </>
   );
