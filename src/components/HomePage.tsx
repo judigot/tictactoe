@@ -5,12 +5,65 @@ interface Props {
 interface GameData {
   player1: string;
   player2: string;
-  gameRounds: [
-    {
-      winner: number;
-      board: Array<(boolean | string)[]>;
-    }
-  ];
+  gameRounds: {
+    winner: number;
+    board: Array<(boolean | string)[]>;
+  }[];
+}
+
+function PreviousSessions({ data }: { data: GameData[] }): JSX.Element {
+  return (
+    <>
+      <h2>Game Sessions</h2>
+      <div style={{ height: "200px", overflowY: "scroll" }}>
+        {data?.map((session, i) => {
+          return (
+            <div
+              key={i}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+              }}
+            >
+              <div style={{ border: "1px solid white" }}>
+                <h2>{session.player1} ❌</h2>
+                <span>vs</span>
+                <h2>{session.player2} ⭕</h2>
+              </div>
+              <div style={{ border: "1px solid white" }}>
+                <table style={{ display: "inline-block" }}>
+                  <thead>
+                    <tr>
+                      <th>Round</th>
+                      <th>Winner</th>
+                      <th>Board</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {session.gameRounds?.map((round, j) => {
+                      return (
+                        <tr key={j}>
+                          <td>Round {j + 1}</td>
+                          <td>
+                            {round.winner === 1
+                              ? `${session.player1} ❌`
+                              : `${session.player2} ⭕`}
+                          </td>
+                          <td>
+                            <button type="button">View Game</button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
 }
 
 export default function HomePage({ handleStartGame }: Props): JSX.Element {
@@ -29,46 +82,32 @@ export default function HomePage({ handleStartGame }: Props): JSX.Element {
         },
       ],
     },
+    {
+      player1: "Judezzzzzzz",
+      player2: "Francis",
+      gameRounds: [
+        {
+          winner: 1,
+          board: [
+            [false, false, false],
+            [false, false, false],
+            [false, false, false],
+          ],
+        },
+        {
+          winner: 1,
+          board: [
+            [false, false, false],
+            [false, false, false],
+            [false, false, false],
+          ],
+        },
+      ],
+    },
   ];
   return (
     <>
-      <div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            height: "200px",
-          }}
-        >
-          <div style={{ border: "1px solid white" }}>
-            <h2>{data[0].player1} ❌</h2>
-            <span>vs</span>
-            <h2>{data[0].player2} ⭕</h2>
-          </div>
-          <div style={{ border: "1px solid white" }}>
-            <table style={{ display: "inline-block" }}>
-              <thead>
-                <tr>
-                  <th>Round</th>
-                  <th>Winner</th>
-                  <th>Board</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Round 1</td>
-                  <td>
-                    {data[0].gameRounds[0].winner === 1
-                      ? data[0].player1
-                      : data[0].player2}
-                  </td>
-                  <td>View Game</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      <PreviousSessions data={data} />
       <h1>
         <button
           type="button"

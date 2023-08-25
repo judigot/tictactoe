@@ -30,11 +30,12 @@ function App() {
     GameState.HOMEPAGE
   );
 
-  const [isGameOver, setIsGameOver] = React.useState<boolean>(false);
+  const [isWinnerSelected, setIsWinnerSelected] =
+    React.useState<boolean>(false);
 
   const reset = () => {
     setMessage("");
-    setIsGameOver(false);
+    setIsWinnerSelected(false);
     setBoard(CLEAN_BOARD);
     setRemainingMoves(9);
   };
@@ -55,13 +56,13 @@ function App() {
       (board[0][0]=== player && board[1][1]=== player && board[2][2] === player) || // \
       (board[0][2]=== player && board[1][1]=== player && board[2][0] === player) // /
     ) {
-      setIsGameOver(true)
+      setIsWinnerSelected(true)
       return true;
     }
   };
 
   const handleMarkGrid = (gridIndex: number) => {
-    if (!isGameOver) {
+    if (!isWinnerSelected) {
       const mark = remainingMoves % 2 !== 0 ? PLAYER_ONE : PLAYER_TWO;
       setRemainingMoves(remainingMoves - 1);
 
@@ -82,17 +83,9 @@ function App() {
 
       if (checkForWinners("X")) {
         setMessage("Player 1 wins");
-      } else {
-        if (remainingMoves === 0) {
-          setMessage("Draw");
-        }
       }
       if (checkForWinners("O")) {
         setMessage("Player 2 wins");
-      } else {
-        if (remainingMoves === 0) {
-          setMessage("Draw");
-        }
       }
     }
   };
@@ -101,6 +94,8 @@ function App() {
     setGameState(GameState.GAME);
     reset();
   };
+
+  const isDraw = !isWinnerSelected && remainingMoves === 0;
 
   return (
     <>
@@ -112,14 +107,17 @@ function App() {
         <>
           <h1>
             {message}
-            {!isGameOver && remainingMoves === 0 && "Draw"}
-            {!isGameOver &&
+            {isDraw && "Draw"}
+            {!isWinnerSelected &&
               remainingMoves !== 0 &&
               `${remainingMoves % 2 !== 0 ? "❌" : "⭕"}'s turn`}
           </h1>
           <div>Remaining moves: {remainingMoves}</div>
           <div id="gridContainer">
-            <div id="gridBox" className={`${!isGameOver ? "pointer" : ""}`}>
+            <div
+              id="gridBox"
+              className={`${!isWinnerSelected ? "pointer" : ""}`}
+            >
               {[...Array(9)].map((element, i) => {
                 let gridState: boolean | string = false;
 
@@ -152,19 +150,30 @@ function App() {
           <br />
           <br />
           <br />
-          {isGameOver && (
-            <div>
-              <button type="button" onClick={reset}>
-                Continue
-              </button>
-              <button type="button" onClick={handleStop}>
-                Stop
-              </button>
-            </div>
-          )}
+          {isDraw && <Menu reset={reset} stop={handleStop} />}
+          {isWinnerSelected && <Menu reset={reset} stop={handleStop} />}
         </>
       )}
     </>
+  );
+}
+
+function Menu({
+  reset,
+  stop,
+}: {
+  reset: () => void;
+  stop: () => void;
+}): JSX.Element {
+  return (
+    <div>
+      <button type="button" onClick={reset}>
+        Continue
+      </button>
+      <button type="button" onClick={stop}>
+        Stop
+      </button>
+    </div>
   );
 }
 
