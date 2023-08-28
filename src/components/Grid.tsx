@@ -1,7 +1,7 @@
 interface Props {
   gridIndex: number;
   gridState: boolean | string;
-  handleMarkGrid: (gridIndex: number) => void;
+  handleMarkGrid?: (gridIndex: number) => void;
 }
 
 export default function Grid({
@@ -10,7 +10,7 @@ export default function Grid({
   handleMarkGrid,
 }: Props): JSX.Element {
   const markGrid = (gridIndex: number) => {
-    !gridState && handleMarkGrid(gridIndex);
+    !gridState && handleMarkGrid && handleMarkGrid(gridIndex);
   };
 
   return (

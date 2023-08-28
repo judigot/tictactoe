@@ -1,15 +1,32 @@
+import React from "react";
+
+import { GameData, getSessions } from "../collections/Session";
+import { MainBoard } from "../App";
 interface Props {
   handleStartGame: () => void;
 }
 
-interface GameData {
-  player1: string;
-  player2: string;
-  scoreBoard: {
-    winner: number;
-    board: Array<(boolean | string)[]>;
-  }[];
-}
+const formatDate = (rawDate: Date) => {
+  const date = new Date(rawDate);
+
+  const year = date.getFullYear();
+  const day = date.getDate();
+  const month = date.toLocaleString("default", {
+    month: "long",
+  });
+
+  const time = new Date(rawDate).toLocaleString("en-US", {
+    // year: "numeric",
+    // month: "numeric",
+    // day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: true,
+  });
+
+  return `${month} ${day}, ${year} at ${time}`;
+};
 
 function PreviousSessions({ data }: { data: GameData[] }): JSX.Element {
   return (
@@ -37,6 +54,7 @@ function PreviousSessions({ data }: { data: GameData[] }): JSX.Element {
                       <th>Round</th>
                       <th>Winner</th>
                       <th>Board</th>
+                      <th>Date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -50,8 +68,11 @@ function PreviousSessions({ data }: { data: GameData[] }): JSX.Element {
                               : `${session.player2} ⭕`}
                           </td>
                           <td>
-                            <button type="button">View Game</button>
+                            <div style={{zoom: "50%"}}>
+                              <MainBoard board={round.board} />
+                            </div>
                           </td>
+                          <td>{formatDate(session.date!)}</td>
                         </tr>
                       );
                     })}
@@ -67,47 +88,20 @@ function PreviousSessions({ data }: { data: GameData[] }): JSX.Element {
 }
 
 export default function HomePage({ handleStartGame }: Props): JSX.Element {
-  const data: GameData[] = [
-    {
-      player1: "Jude",
-      player2: "Francis",
-      scoreBoard: [
-        {
-          winner: 1,
-          board: [
-            [false, false, false],
-            [false, false, false],
-            [false, false, false],
-          ],
-        },
-      ],
-    },
-    {
-      player1: "Judezzzzzzz",
-      player2: "Francis",
-      scoreBoard: [
-        {
-          winner: 1,
-          board: [
-            [false, false, false],
-            [false, false, false],
-            [false, false, false],
-          ],
-        },
-        {
-          winner: 1,
-          board: [
-            [false, false, false],
-            [false, false, false],
-            [false, false, false],
-          ],
-        },
-      ],
-    },
-  ];
+  const [data, setData] = React.useState<GameData[]>();
+
+  React.useEffect(() => {
+    // Initial render
+    (async () => {
+      const data = await getSessions();
+      setData(data);
+    })();
+  }, []);
+
   return (
     <>
-      <PreviousSessions data={data} />
+      {data?.length && <PreviousSessions data={data} />}
+
       <h1>
         <button
           type="button"

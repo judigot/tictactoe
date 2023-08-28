@@ -4,6 +4,7 @@ import "./App.css";
 import Grid from "./components/Grid";
 import HomePage from "./components/HomePage";
 import PlayerNames from "./components/PlayerNames";
+import { ScoreBoard, GameData, insertSession } from "./collections/Session";
 
 enum GameState {
   HOMEPAGE = "homepage",
@@ -29,12 +30,7 @@ function App() {
 
   const [remainingMoves, setRemainingMoves] = React.useState<number>(9);
 
-  const [scoreBoard, setScoreBoard] = React.useState<
-    {
-      winner: number;
-      board: Array<(boolean | string)[]>;
-    }[]
-  >([]);
+  const [scoreBoard, setScoreBoard] = React.useState<ScoreBoard[]>([]);
 
   const [message, setMessage] = React.useState<string>("");
 
@@ -52,18 +48,31 @@ function App() {
     setRemainingMoves(9);
   };
 
-  const handleStop = () => {
-    const session = {
+  const handleStop = async () => {
+    const session: GameData = {
       player1,
       player2,
       scoreBoard,
     };
-    reset();
-    setScoreBoard([]);
-    // Insert session; insert data
-    // fetch; axios
-    alert(JSON.stringify(session));
-    setGameState(GameState.HOMEPAGE);
+
+    try {
+      await insertSession(session);
+    } catch (error: unknown) {
+      if (typeof error === `string`) {
+        throw new Error(`There was an error: error`);
+      }
+      if (error instanceof Error) {
+        throw new Error(`There was an error: ${error.message}`);
+      }
+      if (error instanceof SyntaxError) {
+        // Unexpected token < in JSON
+        throw new Error(`Syntax Error: error`);
+      }
+    } finally {
+      reset();
+      setScoreBoard([]);
+      setGameState(GameState.HOMEPAGE);
+    }
   };
 
   const checkForWinners = (player: string) => {
@@ -145,7 +154,6 @@ function App() {
   return (
     <>
       <h1>Tic-Tac-Toe - judigot</h1>
-      <p>{JSON.stringify(scoreBoard)}</p>
       {gameState === GameState.HOMEPAGE && (
         <HomePage handleStartGame={inputPlayerNames} />
       )}
@@ -184,35 +192,7 @@ function App() {
                 : ""
             }`}
           >
-            <div id="gridBox">
-              {[...Array(9)].map((element, i) => {
-                let gridState: boolean | string = false;
-
-                // 1st row if index is 0, 1, 2
-                if (i >= 0 && i <= 2 && typeof board[0][i] !== "boolean") {
-                  gridState = board[0][i] === "X" ? "❌" : "⭕";
-                }
-
-                // 2nd row if index is 3, 4, 5
-                if (i >= 3 && i <= 5 && typeof board[1][i - 3] !== "boolean") {
-                  gridState = board[1][i - 3] === "X" ? "❌" : "⭕";
-                }
-
-                // 3rd row if index is 6, 7, 8
-                if (i >= 6 && i <= 8 && typeof board[2][i - 6] !== "boolean") {
-                  gridState = board[2][i - 6] === "X" ? "❌" : "⭕";
-                }
-
-                return (
-                  <Grid
-                    key={i}
-                    gridIndex={i}
-                    gridState={gridState}
-                    handleMarkGrid={handleMarkGrid}
-                  />
-                );
-              })}
-            </div>
+            <MainBoard handleMarkGrid={handleMarkGrid} board={board} />
           </div>
           <br />
           <br />
@@ -221,6 +201,46 @@ function App() {
         </>
       )}
     </>
+  );
+}
+
+export function MainBoard({
+  board,
+  handleMarkGrid,
+}: {
+  board: Array<(boolean | string)[]>;
+  handleMarkGrid?: (gridIndex: number) => void;
+}): JSX.Element {
+  return (
+    <div id="gridBox">
+      {[...Array(9)].map((element, i) => {
+        let gridState: boolean | string = false;
+
+        // 1st row if index is 0, 1, 2
+        if (i >= 0 && i <= 2 && typeof board[0][i] !== "boolean") {
+          gridState = board[0][i] === "X" ? "❌" : "⭕";
+        }
+
+        // 2nd row if index is 3, 4, 5
+        if (i >= 3 && i <= 5 && typeof board[1][i - 3] !== "boolean") {
+          gridState = board[1][i - 3] === "X" ? "❌" : "⭕";
+        }
+
+        // 3rd row if index is 6, 7, 8
+        if (i >= 6 && i <= 8 && typeof board[2][i - 6] !== "boolean") {
+          gridState = board[2][i - 6] === "X" ? "❌" : "⭕";
+        }
+
+        return (
+          <Grid
+            key={i}
+            gridIndex={i}
+            gridState={gridState}
+            handleMarkGrid={handleMarkGrid}
+          />
+        );
+      })}
+    </div>
   );
 }
 
