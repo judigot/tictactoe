@@ -15,7 +15,7 @@ export default function Grid({
 
   return (
     <div
-      style={{ border: "1px solid white" }}
+      className="gridCell"
       onClick={() => {
         markGrid(gridIndex);
       }}

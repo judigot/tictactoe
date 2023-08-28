@@ -42,12 +42,12 @@ function PreviousSessions({ data }: { data: GameData[] }): JSX.Element {
                 gridTemplateColumns: "repeat(2, 1fr)",
               }}
             >
-              <div style={{ border: "1px solid white" }}>
+              <div className="gridCell">
                 <h2>{session.player1} ❌</h2>
                 <span>vs</span>
                 <h2>{session.player2} ⭕</h2>
               </div>
-              <div style={{ border: "1px solid white" }}>
+              <div className="gridCell">
                 <table style={{ display: "inline-block" }}>
                   <thead>
                     <tr>
