@@ -68,7 +68,7 @@ function PreviousSessions({ data }: { data: GameData[] }): JSX.Element {
                               : `${session.player2} ⭕`}
                           </td>
                           <td>
-                            <div style={{zoom: "50%"}}>
+                            <div style={{ zoom: "50%" }}>
                               <MainBoard board={round.board} />
                             </div>
                           </td>
@@ -100,7 +100,7 @@ export default function HomePage({ handleStartGame }: Props): JSX.Element {
 
   return (
     <>
-      {data?.length && <PreviousSessions data={data} />}
+      {data && data?.length !== 0 && <PreviousSessions data={data} />}
 
       <h1>
         <button
