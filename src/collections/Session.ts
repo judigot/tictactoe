@@ -14,7 +14,7 @@ export const getSessions = async () => {
   let data: GameData[] = [];
 
   try {
-    const response = await fetch(`http://server.judigot.com/getSessions`, {
+    const response = await fetch(`https://server.judigot.com/getSessions`, {
       // *GET, POST, PATCH, PUT, DELETE
       method: "GET",
       headers: {
@@ -52,7 +52,7 @@ export const insertSession = async (session: GameData) => {
   let data: object | object[] | undefined = undefined;
 
   try {
-    const response = await fetch(`http://server.judigot.com/insertSession`, {
+    const response = await fetch(`https://server.judigot.com/insertSession`, {
       // *GET, POST, PATCH, PUT, DELETE
       method: "POST",
       headers: {
