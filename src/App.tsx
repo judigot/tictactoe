@@ -214,6 +214,7 @@ export function MainBoard({
   return (
     <div id="gridBox">
       {[...Array(9)].map((element, i) => {
+        element;
         let gridState: boolean | string = false;
 
         // 1st row if index is 0, 1, 2
