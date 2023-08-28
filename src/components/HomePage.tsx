@@ -5,7 +5,7 @@ interface Props {
 interface GameData {
   player1: string;
   player2: string;
-  gameRounds: {
+  scoreBoard: {
     winner: number;
     board: Array<(boolean | string)[]>;
   }[];
@@ -40,7 +40,7 @@ function PreviousSessions({ data }: { data: GameData[] }): JSX.Element {
                     </tr>
                   </thead>
                   <tbody>
-                    {session.gameRounds?.map((round, j) => {
+                    {session.scoreBoard?.map((round, j) => {
                       return (
                         <tr key={j}>
                           <td>Round {j + 1}</td>
@@ -71,7 +71,7 @@ export default function HomePage({ handleStartGame }: Props): JSX.Element {
     {
       player1: "Jude",
       player2: "Francis",
-      gameRounds: [
+      scoreBoard: [
         {
           winner: 1,
           board: [
@@ -85,7 +85,7 @@ export default function HomePage({ handleStartGame }: Props): JSX.Element {
     {
       player1: "Judezzzzzzz",
       player2: "Francis",
-      gameRounds: [
+      scoreBoard: [
         {
           winner: 1,
           board: [

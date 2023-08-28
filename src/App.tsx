@@ -3,9 +3,11 @@ import React from "react";
 import "./App.css";
 import Grid from "./components/Grid";
 import HomePage from "./components/HomePage";
+import PlayerNames from "./components/PlayerNames";
 
 enum GameState {
   HOMEPAGE = "homepage",
+  PLAYERNAMES = "playernames",
   GAME = "game",
 }
 
@@ -22,7 +24,17 @@ function App() {
   const [board, setBoard] =
     React.useState<Array<(boolean | string)[]>>(CLEAN_BOARD);
 
+  const [player1, setPlayer1] = React.useState<string>("");
+  const [player2, setPlayer2] = React.useState<string>("");
+
   const [remainingMoves, setRemainingMoves] = React.useState<number>(9);
+
+  const [scoreBoard, setScoreBoard] = React.useState<
+    {
+      winner: number;
+      board: Array<(boolean | string)[]>;
+    }[]
+  >([]);
 
   const [message, setMessage] = React.useState<string>("");
 
@@ -41,6 +53,16 @@ function App() {
   };
 
   const handleStop = () => {
+    const session = {
+      player1,
+      player2,
+      scoreBoard,
+    };
+    reset();
+    setScoreBoard([]);
+    // Insert session; insert data
+    // fetch; axios
+    alert(JSON.stringify(session));
     setGameState(GameState.HOMEPAGE);
   };
 
@@ -57,6 +79,7 @@ function App() {
       (board[0][2]=== player && board[1][1]=== player && board[2][0] === player) // /
     ) {
       setIsWinnerSelected(true)
+      //
       return true;
     }
   };
@@ -82,42 +105,86 @@ function App() {
       }
 
       if (checkForWinners("X")) {
-        setMessage("Player 1 wins");
+        setMessage(`${player1} wins!`);
+        setScoreBoard((scoreBoard) => [
+          ...scoreBoard,
+          {
+            winner: 1,
+            board,
+          },
+        ]);
       }
       if (checkForWinners("O")) {
-        setMessage("Player 2 wins");
+        setMessage(`${player2} wins!`);
+        setScoreBoard((scoreBoard) => [
+          ...scoreBoard,
+          {
+            winner: 2,
+            board,
+          },
+        ]);
       }
     }
   };
 
-  const startGame = () => {
-    setGameState(GameState.GAME);
+  const inputPlayerNames = () => {
+    setGameState(GameState.PLAYERNAMES);
+  };
+
+  const startGame = (player1: string, player2: string) => {
     reset();
+    setPlayer1(player1);
+    setPlayer2(player2);
+    setGameState(GameState.GAME);
   };
 
   const isDraw = !isWinnerSelected && remainingMoves === 0;
 
+  const currentTurn = remainingMoves % 2 !== 0 ? "❌" : "⭕";
+
   return (
     <>
       <h1>Tic-Tac-Toe - judigot</h1>
+      <p>{JSON.stringify(scoreBoard)}</p>
       {gameState === GameState.HOMEPAGE && (
-        <HomePage handleStartGame={startGame} />
+        <HomePage handleStartGame={inputPlayerNames} />
+      )}
+      {gameState === GameState.PLAYERNAMES && (
+        <PlayerNames
+          back={() => {
+            setGameState(GameState.HOMEPAGE);
+          }}
+          startGame={startGame}
+        />
       )}
       {gameState === GameState.GAME && (
         <>
-          <h1>
+          <div>
+            <h2 style={{ display: "inline-block" }}>{player1}</h2>
+            &nbsp;&nbsp;VS&nbsp;&nbsp;&nbsp;
+            <h2 style={{ display: "inline-block" }}>{player2}</h2>
+          </div>
+          <h3>
             {message}
             {isDraw && "Draw"}
             {!isWinnerSelected &&
               remainingMoves !== 0 &&
-              `${remainingMoves % 2 !== 0 ? "❌" : "⭕"}'s turn`}
-          </h1>
+              `${
+                remainingMoves % 2 !== 0 ? `${player1}'s` : `${player2}'s`
+              } turn`}
+          </h3>
           <div>Remaining moves: {remainingMoves}</div>
-          <div id="gridContainer">
-            <div
-              id="gridBox"
-              className={`${!isWinnerSelected ? "pointer" : ""}`}
-            >
+          <div
+            id="gridContainer"
+            className={`${
+              !isWinnerSelected
+                ? currentTurn === "❌"
+                  ? "X-cursor"
+                  : "O-cursor"
+                : ""
+            }`}
+          >
+            <div id="gridBox">
               {[...Array(9)].map((element, i) => {
                 let gridState: boolean | string = false;
 
@@ -147,7 +214,6 @@ function App() {
               })}
             </div>
           </div>
-          <br />
           <br />
           <br />
           {isDraw && <Menu reset={reset} stop={handleStop} />}
