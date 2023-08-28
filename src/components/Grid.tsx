@@ -16,11 +16,25 @@ export default function Grid({
   return (
     <div
       className="gridCell"
+      style={{ position: "relative" }}
       onClick={() => {
         markGrid(gridIndex);
       }}
     >
-      {gridState && <div>{gridState}</div>}
+      {gridState && (
+        <div
+          style={{
+            zoom: "400%",
+            margin: "0",
+            position: "absolute",
+            top: "0%",
+            left: "5%",
+            transform: "translateY(-50%, -50%)",
+          }}
+        >
+          {gridState}
+        </div>
+      )}
     </div>
   );
 }
